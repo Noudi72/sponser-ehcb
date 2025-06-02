@@ -1,0 +1,23 @@
+{
+  "name": "Sponser Bestellformular EHCB",
+  "short_name": "Bestell-App",
+  "description": "Die offizielle EHCB Sponser Bestell-App für Spieler und Betreuer.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#a7001e",
+  "icons": [
+    {
+      "src": "appicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "appicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "lang": "de-CH",
+  "orientation": "portrait"
+}
