@@ -6,38 +6,120 @@
   <title>Sponser Bestellformular EHCB</title>
   <link rel="icon" href="EHCB Sponser icon.png">
   <style>
-    body { font-family: Arial, sans-serif; background: #fff; color: #222; margin: 0; padding: 0; min-height: 100vh; }
-    .header { display: flex; flex-direction: column; align-items: center; background: #fff; border-bottom: 2.5px solid #e10c18; padding: 1.2rem 1rem 1rem 1rem; gap: 1rem; margin-bottom: 2rem; }
-    .header img { max-height: 100px; margin-bottom: 0.3rem; }
-    .header-title { font-size: 2.2rem; font-weight: bold; color: #e10c18; letter-spacing: 0.05em; text-align: center; }
-    .lang-select { margin-top: -2rem; margin-bottom: 1.5rem; text-align: right; width: 100%; }
-    .lang-btn { margin-left: 0.5rem; background: #e10c18; color: #fff; border: none; border-radius: 6px; padding: 0.25rem 1.1rem; font-size: 1rem; font-weight: bold; cursor: pointer; }
-    .lang-btn.active, .lang-btn:focus { background: #bf0912; }
-    .produktliste { margin-bottom: 1.5rem; }
-    .produkt { background: #fff; border-radius: 10px; box-shadow: 0 0 3px #e0e0e0; margin-bottom: 1.5rem; padding: 1.3rem 1.3rem 1.1rem 1.3rem; display: flex; flex-direction: column; gap: 0.7rem; }
-    .produkt-head { display: flex; align-items: flex-start; gap: 1.2rem; margin-bottom: 0.2rem; }
-    .produkt-bild { width: 68px; height: 68px; object-fit: contain; background: #f3f3f3; border-radius: 8px; border: 1px solid #e5e5e5; margin-right: 1.1rem; }
-    .produkt-title { font-size: 1.13rem; font-weight: bold; color: #e10c18; margin-bottom: 2px; }
-    .produkt-beschr { font-size: 0.99rem; color: #444; margin-bottom: 0.2rem; }
-    .geschmack-block { margin-top: 0.7rem; }
-    .geschmack-table { width: 100%; border-collapse: collapse; margin-top: 0.2rem;}
-    .geschmack-table th, .geschmack-table td { padding: 0.37rem 0.7rem 0.37rem 0; font-size: 1.01rem; text-align: left;}
-    .geschmack-table th { font-weight: 600;}
-    .menge-dropdown { width: 62px; }
-    .submit-btn { margin-top: 2.1rem; background: #e10c18; color: #fff; font-size: 1.2rem; font-weight: bold; padding: 0.83rem 2.5rem; border-radius: 9px; border: none; cursor: pointer; letter-spacing: 0.04em; box-shadow: 0 2px 10px #eee; transition: background 0.2s; }
-    .submit-btn:hover { background: #bf0912; }
-    .info-text { margin-top: 1.2rem; color: #555; font-size: 1rem; }
-    .twint-wrap { margin-top: 2rem; display: flex; align-items: center; gap: 1.1rem; }
-    .twint-img { height: 44px; }
-    .review-modal { background: #fff; border-radius: 13px; box-shadow: 0 4px 24px #aaa; padding: 2.2rem 1.2rem 1.7rem 1.2rem; max-width: 440px; min-width: 260px; text-align: left; }
-    .modal-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.15); z-index: 1001; display: flex; align-items: center; justify-content: center; }
-    .modal-btn-row { margin-top: 1.5rem; display: flex; gap: 1.5rem; justify-content: flex-end; }
-    .modal-btn { background: #e10c18; color: #fff; font-weight: bold; padding: 0.55rem 1.8rem; border-radius: 7px; border: none; font-size: 1rem; cursor: pointer; }
-    .modal-btn.cancel { background: #fff; color: #e10c18; border: 1.5px solid #e10c18; }
-    .modal-btn.cancel:hover { background: #e10c18; color: #fff; }
-    .modal-btn.confirm:hover { background: #a60b12; }
-    @media (max-width: 900px) { .bestellformular { max-width: 98vw; } }
-    @media (max-width: 700px) { .header-title { font-size: 1.15rem; } .header img { max-height: 53px; } .produkt-bild { width: 47px; height: 47px; } .produkt { padding: 0.9rem 0.7rem; } }
+    body {
+  font-family: Arial, sans-serif;
+  background: #fff;
+  color: #222;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border-bottom: 2.5px solid #e10c18;
+  padding: 1.2rem 1rem 1rem 1rem;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.header img { max-height: 100px; margin-bottom: 0.3rem; }
+.header-title { font-size: 2.2rem; font-weight: bold; color: #e10c18; letter-spacing: 0.05em; text-align: center; }
+
+.lang-select { margin-top: -2rem; margin-bottom: 1.5rem; text-align: right; width: 100%; }
+.lang-btn { margin-left: 0.5rem; background: #e10c18; color: #fff; border: none; border-radius: 6px; padding: 0.25rem 1.1rem; font-size: 1rem; font-weight: bold; cursor: pointer; }
+.lang-btn.active, .lang-btn:focus { background: #bf0912; }
+
+.bestellformular {
+  max-width: 750px;
+  margin: 0 auto;
+  background: #f7f8fb;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 0 16px 2px #f3f3f3;
+}
+
+.form-row {
+  margin-bottom: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+label { font-weight: 600; }
+input, select, textarea {
+  padding: 0.5rem;
+  font-size: 1.09rem;
+  border-radius: 7px;
+  border: 1px solid #c3c3c3;
+  outline: none;
+  width: 98%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+.produktliste { margin-bottom: 1.5rem; }
+
+.produkt {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 3px #e0e0e0;
+  margin-bottom: 1.5rem;
+  padding: 1.3rem 1.3rem 1.1rem 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.produkt-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  margin-bottom: 0.2rem;
+}
+
+.produkt-bild {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  background: #f3f3f3;
+  border-radius: 8px;
+  border: 1px solid #e5e5e5;
+  margin-right: 1.1rem;
+}
+
+.produkt-title {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: #e10c18;
+  margin-bottom: 2px;
+}
+
+.produkt-beschr { font-size: 0.99rem; color: #444; margin-bottom: 0.2rem; }
+
+.geschmack-block { margin-top: 0.7rem; }
+.geschmack-table { width: 100%; border-collapse: collapse; margin-top: 0.2rem;}
+.geschmack-table th, .geschmack-table td { padding: 0.37rem 0.7rem 0.37rem 0; font-size: 1.01rem; text-align: left;}
+.geschmack-table th { font-weight: 600;}
+.menge-dropdown { width: 62px; }
+.submit-btn { margin-top: 2.1rem; background: #e10c18; color: #fff; font-size: 1.2rem; font-weight: bold; padding: 0.83rem 2.5rem; border-radius: 9px; border: none; cursor: pointer; letter-spacing: 0.04em; box-shadow: 0 2px 10px #eee; transition: background 0.2s; }
+.submit-btn:hover { background: #bf0912; }
+.info-text { margin-top: 1.2rem; color: #555; font-size: 1rem; }
+.twint-wrap { margin-top: 2rem; display: flex; align-items: center; gap: 1.1rem; }
+.twint-img { height: 44px; }
+.review-modal { background: #fff; border-radius: 13px; box-shadow: 0 4px 24px #aaa; padding: 2.2rem 1.2rem 1.7rem 1.2rem; max-width: 440px; min-width: 260px; text-align: left; }
+.modal-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.15); z-index: 1001; display: flex; align-items: center; justify-content: center; }
+.modal-btn-row { margin-top: 1.5rem; display: flex; gap: 1.5rem; justify-content: flex-end; }
+.modal-btn { background: #e10c18; color: #fff; font-weight: bold; padding: 0.55rem 1.8rem; border-radius: 7px; border: none; font-size: 1rem; cursor: pointer; }
+.modal-btn.cancel { background: #fff; color: #e10c18; border: 1.5px solid #e10c18; }
+.modal-btn.cancel:hover { background: #e10c18; color: #fff; }
+.modal-btn.confirm:hover { background: #a60b12; }
+
+@media (max-width: 900px) { .bestellformular { max-width: 98vw; } }
+@media (max-width: 700px) { .header-title { font-size: 1.15rem; } .header img { max-height: 53px; } .produkt-bild { width: 47px; height: 47px; } .produkt { padding: 0.9rem 0.7rem; } }
   </style>
 </head>
 <body>
