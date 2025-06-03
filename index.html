@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sponser Bestellformular EHCB</title>
+  <link rel="icon" href="EHCB Sponser icon.png">
+  <style>
+    body { font-family: Arial, sans-serif; background: #fff; color: #222; margin: 0; padding: 0; min-height: 100vh; }
+    .header { display: flex; flex-direction: column; align-items: center; background: #fff; border-bottom: 2.5px solid #e10c18; padding: 1.2rem 1rem 1rem 1rem; gap: 1rem; margin-bottom: 2rem; }
+    .header img { max-height: 100px; margin-bottom: 0.3rem; }
+    .header-title { font-size: 2.2rem; font-weight: bold; color: #e10c18; letter-spacing: 0.05em; text-align: center; }
+    .lang-select { margin-top: -2rem; margin-bottom: 1.5rem; text-align: right; width: 100%; }
+    .lang-btn { margin-left: 0.5rem; background: #e10c18; color: #fff; border: none; border-radius: 6px; padding: 0.25rem 1.1rem; font-size: 1rem; font-weight: bold; cursor: pointer; }
+    .lang-btn.active, .lang-btn:focus { background: #bf0912; }
+    .produktliste { margin-bottom: 1.5rem; }
+    .produkt { background: #fff; border-radius: 10px; box-shadow: 0 0 3px #e0e0e0; margin-bottom: 1.5rem; padding: 1.3rem 1.3rem 1.1rem 1.3rem; display: flex; flex-direction: column; gap: 0.7rem; }
+    .produkt-head { display: flex; align-items: flex-start; gap: 1.2rem; margin-bottom: 0.2rem; }
+    .produkt-bild { width: 68px; height: 68px; object-fit: contain; background: #f3f3f3; border-radius: 8px; border: 1px solid #e5e5e5; margin-right: 1.1rem; }
+    .produkt-title { font-size: 1.13rem; font-weight: bold; color: #e10c18; margin-bottom: 2px; }
+    .produkt-beschr { font-size: 0.99rem; color: #444; margin-bottom: 0.2rem; }
+    .geschmack-block { margin-top: 0.7rem; }
+    .geschmack-table { width: 100%; border-collapse: collapse; margin-top: 0.2rem;}
+    .geschmack-table th, .geschmack-table td { padding: 0.37rem 0.7rem 0.37rem 0; font-size: 1.01rem; text-align: left;}
+    .geschmack-table th { font-weight: 600;}
+    .menge-dropdown { width: 62px; }
+    .submit-btn { margin-top: 2.1rem; background: #e10c18; color: #fff; font-size: 1.2rem; font-weight: bold; padding: 0.83rem 2.5rem; border-radius: 9px; border: none; cursor: pointer; letter-spacing: 0.04em; box-shadow: 0 2px 10px #eee; transition: background 0.2s; }
+    .submit-btn:hover { background: #bf0912; }
+    .info-text { margin-top: 1.2rem; color: #555; font-size: 1rem; }
+    .twint-wrap { margin-top: 2rem; display: flex; align-items: center; gap: 1.1rem; }
+    .twint-img { height: 44px; }
+    .review-modal { background: #fff; border-radius: 13px; box-shadow: 0 4px 24px #aaa; padding: 2.2rem 1.2rem 1.7rem 1.2rem; max-width: 440px; min-width: 260px; text-align: left; }
+    .modal-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.15); z-index: 1001; display: flex; align-items: center; justify-content: center; }
+    .modal-btn-row { margin-top: 1.5rem; display: flex; gap: 1.5rem; justify-content: flex-end; }
+    .modal-btn { background: #e10c18; color: #fff; font-weight: bold; padding: 0.55rem 1.8rem; border-radius: 7px; border: none; font-size: 1rem; cursor: pointer; }
+    .modal-btn.cancel { background: #fff; color: #e10c18; border: 1.5px solid #e10c18; }
+    .modal-btn.cancel:hover { background: #e10c18; color: #fff; }
+    .modal-btn.confirm:hover { background: #a60b12; }
+    @media (max-width: 900px) { .bestellformular { max-width: 98vw; } }
+    @media (max-width: 700px) { .header-title { font-size: 1.15rem; } .header img { max-height: 53px; } .produkt-bild { width: 47px; height: 47px; } .produkt { padding: 0.9rem 0.7rem; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="EHCB Sponser icon.png" alt="EHCB Sponser" />
+    <span class="header-title">Sponser Bestellformular</span>
+  </div>
+  <div class="lang-select">
+    <button class="lang-btn active" data-lang="de">DE</button>
+    <button class="lang-btn" data-lang="fr">FR</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+  </div>
+  <div class="bestellformular" id="bestellformularWrap">
+    <!-- Formular wird per JS generiert -->
+  </div>
+  <!-- Review-Modal (Bestellübersicht) -->
+  <div id="reviewModal" style="display:none"></div>
+  <div class="twint-wrap" id="twintWrap" style="display:none;">
+    <img src="https://www.twint.ch/wp-content/themes/twint/images/twint-logo.svg" alt="TWINT" class="twint-img" />
+    <span id="twintInfo"></span>
+  </div>
+  <script>
+    // Übersetzungen
+    const LANG = {
+      de: {
+        title: "Sponser Bestellformular",
+        name: "Name*",
+        email: "E-Mail*",
+        submit: "Bestellung absenden",
+        review: "Bestellübersicht",
+        back: "Zurück",
+        confirm: "Bestellung absenden",
+        zahlung: "Zahlung: Bar oder TWINT bei Erhalt der Ware.",
+        bestaetigung: "Eine Bestellübersicht erscheint vor Absenden.",
+        menge: "Menge",
+        geschmack: "Geschmack",
+        produkt: "Produkt",
+        preis: "Preis",
+        summe: "Gesamtsumme",
+        twint: "Zahle per TWINT an: 079 41 42 049",
+        info: "Bar oder TWINT bei Erhalt der Ware.",
+        thanks: "Bestellung wurde erfasst. Du erhältst die Ware und zahlst bar oder mit TWINT bei Übergabe.",
+        error_name: "Bitte Name angeben!",
+        error_email: "Bitte eine gültige E-Mail angeben!",
+        error_produkt: "Bitte mindestens ein Produkt auswählen!"
+      },
+      fr: {
+        title: "Formulaire de commande Sponser",
+        name: "Nom*",
+        email: "E-mail*",
+        submit: "Envoyer la commande",
+        review: "Aperçu de la commande",
+        back: "Retour",
+        confirm: "Envoyer la commande",
+        zahlung: "Paiement: Espèces ou TWINT lors de la livraison.",
+        bestaetigung: "Un aperçu de la commande apparaît avant l'envoi.",
+        menge: "Quantité",
+        geschmack: "Goût",
+        produkt: "Produit",
+        preis: "Prix",
+        summe: "Total",
+        twint: "Payer via TWINT à: 079 41 42 049",
+        info: "Espèces ou TWINT à la livraison.",
+        thanks: "La commande a été enregistrée. Tu recevras la marchandise et paieras en espèces ou avec TWINT à la remise.",
+        error_name: "Merci d'indiquer ton nom!",
+        error_email: "Merci d'indiquer une adresse e-mail valide!",
+        error_produkt: "Merci de choisir au moins un produit!"
+      },
+      en: {
+        title: "Sponser Order Form",
+        name: "Name*",
+        email: "E-mail*",
+        submit: "Submit order",
+        review: "Order overview",
+        back: "Back",
+        confirm: "Submit order",
+        zahlung: "Payment: Cash or TWINT on delivery.",
+        bestaetigung: "An order overview appears before submission.",
+        menge: "Quantity",
+        geschmack: "Flavor",
+        produkt: "Product",
+        preis: "Price",
+        summe: "Total",
+        twint: "Pay by TWINT to: 079 41 42 049",
+        info: "Cash or TWINT on delivery.",
+        thanks: "Order received. You will get your goods and pay cash or via TWINT at handover.",
+        error_name: "Please enter your name!",
+        error_email: "Please enter a valid email address!",
+        error_produkt: "Please select at least one product!"
+      }
+    };
+ 
+const SHEET_ID = "1ghgUqfMVAYuJoucv5Aj6NRxV4woKbGxvnHEeLerNHk0";
+const SHEET_GID = "0"; // Falls du mehrere Tabs hast, ggf. anpassen!
+
+let lang = 'de';
+let products = [];
+let selected = {}; // { ProduktIndex: {geschmack: menge, ...}, ... }
+
+// --- Sprachumschaltung ---
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    lang = btn.getAttribute('data-lang');
+    renderForm();
+  }
+});
+
+// --- Produktdaten live aus Google Sheet laden ---
+function fetchProducts(callback) {
+  // Google Visualization API, JSON-in-Script
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
+  fetch(url)
+    .then(r => r.text())
+    .then(txt => {
+      // Text-JSON in echtes JSON parsen
+      const json = JSON.parse(txt.substr(47).slice(0, -2));
+      const cols = json.table.cols.map(col => col.label.toLowerCase());
+      products = json.table.rows.map(row => {
+        let obj = {};
+        row.c.forEach((cell, i) => {
+          let val = cell ? cell.v : "";
+          obj[cols[i]] = val;
+        });
+        // Varianten splitten
+        if (obj.varianten) {
+          obj.varianten = obj.varianten.split(",").map(s => s.trim()).filter(Boolean);
+        } else {
+          obj.varianten = [];
+        }
+        obj.preis = parseFloat(obj.preis) || 0;
+        return obj;
+      }).filter(obj => obj.name && obj.preis); // nur Produkte mit Name und Preis
+      callback();
+    });
+}
+
+// --- Formular rendern ---
+function renderForm() {
+  const T = LANG[lang];
+  document.title = T.title;
+  document.querySelector('.header-title').textContent = T.title;
+
+  let html = `
+    <form id="orderForm" autocomplete="off">
+      <div class="form-row">
+        <label for="spielerName">${T.name}</label>
+        <input type="text" id="spielerName" name="spielerName" required autocomplete="off" />
+      </div>
+      <div class="form-row">
+        <label for="spielerEmail">${T.email}</label>
+        <input type="email" id="spielerEmail" name="spielerEmail" required autocomplete="off" />
+      </div>
+      <div class="produktliste">
+  `;
+
+  products.forEach((produkt, pIdx) => {
+    html += `<div class="produkt">
+      <div class="produkt-head">
+        <img class="produkt-bild" src="${produkt['bild-url'] || ''}" alt="">
+        <div>
+          <div class="produkt-title">${produkt.name}</div>
+          <div class="produkt-beschr">${produkt.beschreibung || ""}</div>
+          <div style="font-size:0.98rem; margin-top:2px;"><b>${T.preis}:</b> CHF ${produkt.preis.toFixed(2)}</div>
+        </div>
+      </div>`;
+    if (produkt.varianten.length) {
+      html += `<div class="geschmack-block"><b>${T.geschmack}:</b>
+        <table class="geschmack-table"><tbody>`;
+      produkt.varianten.forEach((variante, gIdx) => {
+        const menge = (selected[pIdx] && selected[pIdx][variante]) || 0;
+        html += `<tr>
+          <td>${variante}</td>
+          <td>
+            <select class="menge-dropdown" data-p="${pIdx}" data-g="${gIdx}">
+              <option value="0">0</option>
+              ${Array.from({length: 10}).map((_,i)=>`<option value="${i+1}"${menge===i+1?' selected':''}>${i+1}</option>`).join('')}
+            </select>
+          </td>
+        </tr>`;
+      });
+      html += `</tbody></table></div>`;
+    } else {
+      const menge = (selected[pIdx] && selected[pIdx]['Standard']) || 0;
+      html += `<div class="geschmack-block"><b>${T.menge}:</b>
+        <select class="menge-dropdown" data-p="${pIdx}" data-g="0">
+          <option value="0">0</option>
+          ${Array.from({length: 10}).map((_,i)=>`<option value="${i+1}"${menge===i+1?' selected':''}>${i+1}</option>`).join('')}
+        </select>
+      </div>`;
+    }
+    html += `</div>`;
+  });
+
+  html += `
+      </div>
+      <button class="submit-btn" type="submit">${T.submit}</button>
+      <div class="info-text"><b>${T.zahlung}</b><br>${T.bestaetigung}</div>
+    </form>
+  `;
+
+  document.getElementById('bestellformularWrap').innerHTML = html;
+
+  // --- Event-Listener für Mengen ändern ---
+  document.querySelectorAll('.menge-dropdown').forEach(sel => {
+    sel.onchange = function() {
+      const pIdx = +this.getAttribute('data-p');
+      const produkt = products[pIdx];
+      const varName = produkt.varianten.length ? produkt.varianten[+this.getAttribute('data-g')] : 'Standard';
+      const val = +this.value;
+      if (!selected[pIdx]) selected[pIdx] = {};
+      selected[pIdx][varName] = val;
+    };
+  });
+
+  // --- Submit Event ---
+  document.getElementById('orderForm').onsubmit = function(e) {
+    e.preventDefault();
+    const name = document.getElementById('spielerName').value.trim();
+    const email = document.getElementById('spielerEmail').value.trim();
+    if (!name) return alert(T.error_name);
+    if (!email || !email.includes("@")) return alert(T.error_email);
+
+    // Bestellung zusammenstellen
+    let bestellung = [];
+    products.forEach((produkt, pIdx) => {
+      const auswahl = selected[pIdx] || {};
+      (produkt.varianten.length ? produkt.varianten : ['Standard']).forEach(variante => {
+        const menge = auswahl[variante] || 0;
+        if (menge > 0) {
+          bestellung.push({
+            produkt: produkt.name,
+            geschmack: produkt.varianten.length ? variante : '',
+            preis: produkt.preis,
+            menge
+          });
+        }
+      });
+    });
+    if (!bestellung.length) return alert(T.error_produkt);
+
+    showReviewModal(bestellung, name, email);
+  };
+}
+
+// --- Bestellübersicht (Review Modal) ---
+function showReviewModal(bestellung, name, email) {
+  const T = LANG[lang];
+  let summe = 0;
+  let html = `<div class="review-modal"><h3>${T.review}</h3>
+    <div><b>${T.name}</b> ${name}<br><b>${T.email}</b> ${email}</div><hr>
+    <table style="width:100%; margin-top: 1rem;">
+      <thead>
+        <tr>
+          <th>${T.produkt}</th>
+          <th>${T.geschmack}</th>
+          <th>${T.menge}</th>
+          <th>${T.preis}</th>
+        </tr>
+      </thead>
+      <tbody>`;
+  bestellung.forEach(item => {
+    html += `<tr>
+      <td>${item.produkt}</td>
+      <td>${item.geschmack}</td>
+      <td>${item.menge}</td>
+      <td>CHF ${(item.preis * item.menge).toFixed(2)}</td>
+    </tr>`;
+    summe += item.preis * item.menge;
+  });
+  html += `</tbody></table>
+    <div style="text-align:right;font-weight:bold;margin-top:1.2rem;">${T.summe}: CHF ${summe.toFixed(2)}</div>
+    <div class="modal-btn-row">
+      <button class="modal-btn cancel" onclick="document.getElementById('reviewModal').style.display='none'">${T.back}</button>
+      <button class="modal-btn confirm" onclick="finalizeOrder(${JSON.stringify(bestellung).replace(/"/g,'&quot;')},'${name.replace(/'/g,'&#39;')}','${email.replace(/'/g,'&#39;')}')">${T.confirm}</button>
+    </div>
+  </div>`;
+
+  document.getElementById('reviewModal').innerHTML = html;
+  document.getElementById('reviewModal').style.display = 'flex';
+}
+
+// --- Bestellung abschließen ---
+function finalizeOrder(bestellung, name, email) {
+  document.getElementById('reviewModal').style.display = 'none';
+  // Bestellung lokal speichern (wie gehabt)
+  let orders = JSON.parse(localStorage.getItem('ehcb_sponser_orders_v7')) || [];
+  orders.push({ name, email, items: bestellung, timestamp: new Date().toISOString() });
+  localStorage.setItem('ehcb_sponser_orders_v7', JSON.stringify(orders));
+
+  // Info & TWINT anzeigen
+  const T = LANG[lang];
+  document.getElementById('bestellformularWrap').innerHTML = `<h2>${T.thanks}</h2>
+    <div class="twint-wrap">
+      <img src="https://www.twint.ch/wp-content/themes/twint/images/twint-logo.svg" alt="TWINT" class="twint-img" />
+      <span style="font-size:1.15rem;">${T.twint}</span>
+    </div>
+    <button class="submit-btn" style="margin-top:2.5rem;" onclick="location.reload()">${T.back}</button>`;
+}
+
+// --- Init ---
+fetchProducts(renderForm);
+
+// --- ADMIN-EXPORT / BESTELLÜBERSICHT ---
+function renderAdminOrders() {
+  let orders = JSON.parse(localStorage.getItem('ehcb_sponser_orders_v7')) || [];
+  if (!orders.length) {
+    alert("Keine Bestellungen gespeichert.");
+    return;
+  }
+  let html = `
+    <h2 style="color:#e10c18;margin-bottom:1.3rem;">Bestellübersicht (letzte 7 Tage)</h2>
+    <table style="width:100%; border-collapse:collapse; margin-bottom:2rem;">
+      <thead>
+        <tr style="background:#e10c18;color:#fff;">
+          <th>Name</th><th>E-Mail</th><th>Datum</th>
+          <th>Produkt</th><th>Geschmack</th>
+          <th>Menge</th><th>Preis/Einheit</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  const now = Date.now();
+  let filtered = orders.filter(o => now - new Date(o.timestamp).getTime() < 7*24*60*60*1000);
+  filtered.forEach(o => {
+    o.items.forEach(item => {
+      html += `<tr>
+        <td>${o.name}</td>
+        <td>${o.email}</td>
+        <td>${(new Date(o.timestamp)).toLocaleDateString()}</td>
+        <td>${item.produkt}</td>
+        <td>${item.geschmack}</td>
+        <td>${item.menge}</td>
+        <td>${item.preis.toFixed(2)}</td>
+      </tr>`;
+    });
+  });
+  html += `</tbody></table>
+    <button class="submit-btn" onclick="exportOrdersCSV()">Export als Excel</button>
+    <button class="submit-btn" onclick="exportOrdersPDF()" style="margin-left:1.2rem;">Export als PDF</button>
+    <button class="submit-btn" onclick="closeAdminOrders()" style="margin-left:1.2rem;">Schließen</button>
+  `;
+  let modal = document.createElement('div');
+  modal.className = 'modal-bg';
+  modal.id = 'adminOrderModal';
+  modal.innerHTML = `<div class="review-modal" style="max-width:900px;width:97vw">${html}</div>`;
+  document.body.appendChild(modal);
+}
+
+function closeAdminOrders() {
+  let modal = document.getElementById('adminOrderModal');
+  if (modal) document.body.removeChild(modal);
+}
+
+function exportOrdersCSV() {
+  let orders = JSON.parse(localStorage.getItem('ehcb_sponser_orders_v7')) || [];
+  const now = Date.now();
+  let filtered = orders.filter(o => now - new Date(o.timestamp).getTime() < 7*24*60*60*1000);
+  let csv = 'Name;E-Mail;Datum;Produkt;Geschmack;Menge;Preis/Einheit\n';
+  filtered.forEach(o => {
+    o.items.forEach(item => {
+      csv += `"${o.name}";"${o.email}";"${(new Date(o.timestamp)).toLocaleDateString()}";"${item.produkt}";"${item.geschmack}";${item.menge};${item.preis.toFixed(2)}\n`;
+    });
+  });
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'bestellungen_ehcb_sponser.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// --- Button für Admin/Export einblenden ---
+const adminBtn = document.createElement('button');
+adminBtn.textContent = 'Admin-Export';
+adminBtn.className = 'submit-btn';
+adminBtn.style.position = 'fixed';
+adminBtn.style.bottom = '22px';
+adminBtn.style.right = '22px';
+adminBtn.style.zIndex = '10002';
+adminBtn.onclick = renderAdminOrders;
+document.body.appendChild(adminBtn);
+
+// --- PDF-Export für Admin-Export ---
+function exportOrdersPDF() {
+  let orders = JSON.parse(localStorage.getItem('ehcb_sponser_orders_v7')) || [];
+  const now = Date.now();
+  let filtered = orders.filter(o => now - new Date(o.timestamp).getTime() < 7*24*60*60*1000);
+
+  // Dynamisch PDF.js laden, falls noch nicht eingebunden
+  if (typeof window.jspdf === "undefined") {
+    let s = document.createElement('script');
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+    s.onload = doExportOrdersPDF;
+    document.body.appendChild(s);
+  } else {
+    doExportOrdersPDF();
+  }
+
+  function doExportOrdersPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({orientation:'landscape'});
+    const columns = ['Name','E-Mail','Datum','Produkt','Geschmack','Menge','Preis/Einheit'];
+    let rows = [];
+    filtered.forEach(o => {
+      o.items.forEach(item => {
+        rows.push([
+          o.name,
+          o.email,
+          (new Date(o.timestamp)).toLocaleDateString(),
+          item.produkt,
+          item.geschmack,
+          item.menge,
+          item.preis.toFixed(2)
+        ]);
+      });
+    });
+    doc.setFontSize(12);
+    doc.text('Bestellungen EHCB Sponser (letzte 7 Tage)', 12, 12);
+
+    // Einfache Tabellen-Logik
+    let startY = 18;
+    let colWidths = [34,44,22,60,40,18,27];
+    // Spaltenüberschriften
+    columns.forEach((col, i) => {
+      doc.setFont(undefined, 'bold');
+      doc.text(col, 10+colWidths.slice(0,i).reduce((a,b)=>a+b,0), startY);
+      doc.setFont(undefined, 'normal');
+    });
+    // Datenzeilen
+    rows.forEach((row, r) => {
+      row.forEach((cell, i) => {
+        doc.text(String(cell), 10+colWidths.slice(0,i).reduce((a,b)=>a+b,0), startY+7+r*7);
+      });
+    });
+    doc.save('bestellungen_ehcb_sponser.pdf');
+  }
+}
+</script>
