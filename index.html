@@ -149,29 +149,22 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 
 // --- Produktdaten live aus Google Sheet laden ---
 function fetchProducts(callback) {
-  // Google Visualization API, JSON-in-Script
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
   fetch(url)
     .then(r => r.text())
     .then(txt => {
-      // Text-JSON in echtes JSON parsen
       const json = JSON.parse(txt.substr(47).slice(0, -2));
-      const cols = json.table.cols.map(col => col.label.toLowerCase());
-      products = json.table.rows.map(row => {
-        let obj = {};
-        row.c.forEach((cell, i) => {
-          let val = cell ? cell.v : "";
-          obj[cols[i]] = val;
-        });
-        // Varianten splitten
-        if (obj.varianten) {
-          obj.varianten = obj.varianten.split(",").map(s => s.trim()).filter(Boolean);
-        } else {
-          obj.varianten = [];
-        }
-        obj.preis = parseFloat(obj.preis) || 0;
-        return obj;
-      }).filter(obj => obj.name && obj.preis); // nur Produkte mit Name und Preis
+      const rows = json.table.rows.map(row => row.c.map(cell => cell ? cell.v : ""));
+
+      // Erste Zeile ist Kopfzeile (Überschriften), ab der zweiten kommen Produkte
+      products = rows.slice(1).map(arr => ({
+        bild: arr[0],
+        name: arr[1],
+        varianten: arr[2] ? arr[2].split(',').map(s=>s.trim()).filter(Boolean) : [],
+        preis: parseFloat(arr[3]) || 0,
+        beschreibung: arr[4] || ""
+      })).filter(p => p.name && p.preis);
+
       callback();
     });
 }
@@ -198,7 +191,7 @@ function renderForm() {
   products.forEach((produkt, pIdx) => {
     html += `<div class="produkt">
       <div class="produkt-head">
-        <img class="produkt-bild" src="${produkt['bild-url'] || ''}" alt="">
+        <img class="produkt-bild" src="${produkt.bild || ''}" alt="">
         <div>
           <div class="produkt-title">${produkt.name}</div>
           <div class="produkt-beschr">${produkt.beschreibung || ""}</div>
