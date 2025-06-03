@@ -6,7 +6,7 @@
   <title>Sponser Bestellformular EHCB</title>
   <link rel="icon" href="EHCB Sponser icon.png">
   <style>
-    body {
+body {
   font-family: Arial, sans-serif;
   background: #fff;
   color: #222;
@@ -118,8 +118,27 @@ input, select, textarea {
 .modal-btn.cancel:hover { background: #e10c18; color: #fff; }
 .modal-btn.confirm:hover { background: #a60b12; }
 
-@media (max-width: 900px) { .bestellformular { max-width: 98vw; } }
-@media (max-width: 700px) { .header-title { font-size: 1.15rem; } .header img { max-height: 53px; } .produkt-bild { width: 47px; height: 47px; } .produkt { padding: 0.9rem 0.7rem; } }
+@media (max-width: 900px) {
+  .bestellformular { max-width: 99vw; padding: 1.1rem 0.3rem; }
+}
+
+@media (max-width: 700px) {
+  .header-title { font-size: 1.1rem; }
+  .header img { max-height: 44px; }
+  .produkt-bild { width: 39px; height: 39px; }
+  .produkt { padding: 0.6rem 0.2rem; }
+  .form-row { gap: 0.15rem; }
+  input, select, textarea { font-size: 1rem; padding: 0.35rem; }
+}
+
+@media (max-width: 480px) {
+  .header-title { font-size: 0.96rem; }
+  .bestellformular { padding: 0.5rem 0.04rem 0.7rem 0.04rem; }
+  .produkt { gap: 0.3rem; }
+  .produkt-title { font-size: 1rem; }
+  .submit-btn { font-size: 1rem; padding: 0.5rem 1.1rem; }
+  .twint-img { height: 32px; }
+}
   </style>
 </head>
 <body>
