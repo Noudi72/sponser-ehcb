@@ -161,6 +161,7 @@ input, select, textarea {
     <button class="lang-btn" data-lang="fr">FR</button>
     <button class="lang-btn" data-lang="en">EN</button>
   </div>
+  <div id="adminExportWrap" style="width:100%;display:flex;justify-content:flex-end;"></div>
   <div class="bestellformular" id="bestellformularWrap">
     <!-- Formular wird per JS generiert -->
   </div>
@@ -514,16 +515,16 @@ function exportOrdersCSV() {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
-// --- Button für Admin/Export einblenden ---
+// Admin-Export-Button oben rechts unter der Sprachwahl einfügen:
 const adminBtn = document.createElement('button');
 adminBtn.textContent = 'Admin-Export';
 adminBtn.className = 'submit-btn';
-adminBtn.style.position = 'fixed';
-adminBtn.style.bottom = '22px';
-adminBtn.style.right = '22px';
-adminBtn.style.zIndex = '10002';
+adminBtn.style.fontSize = '0.95rem';
+adminBtn.style.padding = '0.38rem 1.1rem';
+adminBtn.style.borderRadius = '7px';
+adminBtn.style.margin = '0.25rem 0.7rem 0 0';
 adminBtn.onclick = renderAdminOrders;
-document.body.appendChild(adminBtn);
+document.getElementById('adminExportWrap').appendChild(adminBtn);
 
 // --- PDF-Export für Admin-Export ---
 function exportOrdersPDF() {
