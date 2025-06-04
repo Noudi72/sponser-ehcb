@@ -105,9 +105,24 @@ input, select, textarea {
 .produkt-beschr { font-size: 0.99rem; color: #444; margin-bottom: 0.2rem; }
 
 .geschmack-block { margin-top: 0.7rem; }
-.geschmack-table { width: 100%; border-collapse: collapse; margin-top: 0.2rem;}
-.geschmack-table th, .geschmack-table td { padding: 0.37rem 0.7rem 0.37rem 0; font-size: 1.01rem; text-align: left;}
-.geschmack-table th { font-weight: 600;}
+.geschmack-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.2rem;
+}
+
+.geschmack-table td {
+  padding: 0.37rem 0.4rem 0.37rem 0;
+  font-size: 1.01rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.geschmack-table td:last-child {
+  width: 85px;      /* Sorgt für gleichmäßige Ausrichtung */
+  min-width: 70px;
+  text-align: right;
+}
 .menge-dropdown { width: 62px; }
 .submit-btn { margin-top: 2.1rem; background: #e10c18; color: #fff; font-size: 1.2rem; font-weight: bold; padding: 0.83rem 2.5rem; border-radius: 9px; border: none; cursor: pointer; letter-spacing: 0.04em; box-shadow: 0 2px 10px #eee; transition: background 0.2s; }
 .submit-btn:hover { background: #bf0912; }
