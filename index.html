@@ -355,24 +355,40 @@ function renderForm() {
 
   html += `
       </div>
-      <button class="submit-btn" type="submit">${T.submit}</button>
+      <div id="zwischensummeBox" class="info-text" style="margin:1rem 0 1.5rem 0; font-size:1.2rem; font-weight:bold;"></div><button class="submit-btn" type="submit">${T.submit}</button>
       <div class="info-text"><b>${T.zahlung}</b><br>${T.bestaetigung}</div>
     </form>
   `;
 
   document.getElementById('bestellformularWrap').innerHTML = html;
+  // --- Zwischensumme berechnen und anzeigen ---
+function updateZwischensumme() {
+  let summe = 0;
+  products.forEach((produkt, pIdx) => {
+    const auswahl = selected[pIdx] || {};
+    (produkt.varianten.length ? produkt.varianten : ['Standard']).forEach(variante => {
+      const menge = auswahl[variante] || 0;
+      summe += (menge > 0 ? menge * produkt.preis : 0);
+    });
+  });
+  document.getElementById('zwischensummeBox').textContent = summe > 0
+    ? `Zwischensumme: CHF ${summe.toFixed(2)}`
+    : '';
+}
+updateZwischensumme();
 
   // --- Event-Listener für Mengen ändern ---
-  document.querySelectorAll('.menge-dropdown').forEach(sel => {
-    sel.onchange = function() {
-      const pIdx = +this.getAttribute('data-p');
-      const produkt = products[pIdx];
-      const varName = produkt.varianten.length ? produkt.varianten[+this.getAttribute('data-g')] : 'Standard';
-      const val = +this.value;
-      if (!selected[pIdx]) selected[pIdx] = {};
-      selected[pIdx][varName] = val;
-    };
-  });
+ document.querySelectorAll('.menge-dropdown').forEach(sel => {
+  sel.onchange = function() {
+    const pIdx = +this.getAttribute('data-p');
+    const produkt = products[pIdx];
+    const varName = produkt.varianten.length ? produkt.varianten[+this.getAttribute('data-g')] : 'Standard';
+    const val = +this.value;
+    if (!selected[pIdx]) selected[pIdx] = {};
+    selected[pIdx][varName] = val;
+    updateZwischensumme(); // <-- DAS IST NEU!
+  };
+});
 
   // --- Submit Event ---
   document.getElementById('orderForm').onsubmit = function(e) {
