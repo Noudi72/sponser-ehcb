@@ -1,18 +1,13 @@
 {
-  "name": "Sponser Bestellformular",
+  "name": "EHCB Sponser Order",
   "short_name": "Sponser",
-  "start_url": ".",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#e10c18",
+  "background_color": "#001F4E",
+  "theme_color": "#B00000",
   "icons": [
     {
-      "src": "appicon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "appicon.png",
+      "src": "icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
