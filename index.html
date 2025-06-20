@@ -517,6 +517,20 @@ function finalizeOrder(bestellung, name, email) {
   orders.push({ name, email, items: bestellung, timestamp: new Date().toISOString() });
   localStorage.setItem('ehcb_sponser_orders_v7', JSON.stringify(orders));
 
+  // Google Sheets-Anbindung:
+  fetch("https://script.google.com/macros/s/AKfycbx7KNZCzZFNgtQ8MldGQKU8_DVLEbm7ZGG0yiwmzAw6IV-C9Nr9T15GiCRWq-LumyqB9w/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      items: bestellung
+    })
+  });
+
   // Info & TWINT anzeigen
   const T = LANG[lang];
   document.getElementById('bestellformularWrap').innerHTML = `<h2>${T.thanks}</h2>
