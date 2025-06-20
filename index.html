@@ -520,15 +520,10 @@ function finalizeOrder(bestellung, name, email) {
   // Google Sheets-Anbindung:
   fetch("https://script.google.com/macros/s/AKfycbx7KNZCzZFNgtQ8MldGQKU8_DVLEbm7ZGG0yiwmzAw6IV-C9Nr9T15GiCRWq-LumyqB9w/exec", {
     method: "POST",
-    mode: "no-cors",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/x-www-form-urlencoded"
     },
-    body: JSON.stringify({
-      name: name,
-      email: email,
-      items: bestellung
-    })
+    body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&items=${encodeURIComponent(JSON.stringify(bestellung))}`
   });
 
   // Info & TWINT anzeigen
