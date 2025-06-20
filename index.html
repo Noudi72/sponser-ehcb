@@ -517,13 +517,11 @@ function finalizeOrder(bestellung, name, email) {
   orders.push({ name, email, items: bestellung, timestamp: new Date().toISOString() });
   localStorage.setItem('ehcb_sponser_orders_v7', JSON.stringify(orders));
 
-  // Google Sheets-Anbindung:
-  fetch("https://script.google.com/macros/s/AKfycbxT1IrcgdAqTv0WabOkr6gjMQZRCAo1N95VZjjgS2ns8GnIbdq-VBTsydZqDwpcyNO91g/exec", {
+  // Bestellung an Netlify Function senden:
+  fetch("/.netlify/functions/order", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&items=${encodeURIComponent(JSON.stringify(bestellung))}`
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, items: bestellung })
   });
 
   // Info & TWINT anzeigen
