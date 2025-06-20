@@ -334,7 +334,9 @@ function fetchProducts(callback) {
         name: arr[1],
         varianten: arr[2] ? arr[2].split(',').map(s=>s.trim()).filter(Boolean) : [],
         preis: parseFloat(arr[3]) || 0,
-        beschreibung: arr[4] || ""
+        beschreibung_de: arr[4] || "",
+        beschreibung_fr: arr[5] || "",
+        beschreibung_en: arr[6] || ""
       })).filter(p => p.name && p.preis);
 
       callback();
@@ -361,12 +363,17 @@ function renderForm() {
   `;
 
   products.forEach((produkt, pIdx) => {
+    // Dynamische Auswahl der Beschreibung je nach Sprache
+    let beschreibung = "";
+    if (lang === "de") beschreibung = produkt.beschreibung_de;
+    if (lang === "fr") beschreibung = produkt.beschreibung_fr;
+    if (lang === "en") beschreibung = produkt.beschreibung_en;
     html += `<div class="produkt">
       <div class="produkt-head">
         <img class="produkt-bild" src="${produkt.bild || ''}" alt="">
         <div>
           <div class="produkt-title">${produkt.name}</div>
-          <div class="produkt-beschr">${produkt.beschreibung || ""}</div>
+          <div class="produkt-beschr">${beschreibung || ""}</div>
           <div style="font-size:0.98rem; margin-top:2px;"><b>${T.preis}:</b> CHF ${produkt.preis.toFixed(2)}</div>
         </div>
       </div>`;
@@ -531,7 +538,7 @@ function renderAdminOrders() {
     return;
   }
   let html = `
-    <h2 style="color:#e10c18;margin-bottom:1.3rem;">Bestellübersicht (letzte 7 Tage)</h2>
+    <h2 style="color:#e10c18;margin-bottom:1.3rem;">Bestellübersicht (letzte 14 Tage)</h2>
     <table style="width:100%; border-collapse:collapse; margin-bottom:2rem;">
       <thead>
         <tr style="background:#e10c18;color:#fff;">
@@ -543,7 +550,7 @@ function renderAdminOrders() {
       <tbody>
   `;
   const now = Date.now();
-  let filtered = orders.filter(o => now - new Date(o.timestamp).getTime() < 7*24*60*60*1000);
+  let filtered = orders.filter(o => now - new Date(o.timestamp).getTime() < 14*24*60*60*1000);
   filtered.forEach(o => {
     o.items.forEach(item => {
       html += `<tr>
@@ -577,7 +584,7 @@ function closeAdminOrders() {
 function exportOrdersCSV() {
   let orders = JSON.parse(localStorage.getItem('ehcb_sponser_orders_v7')) || [];
   const now = Date.now();
-  let filtered = orders.filter(o => now - new Date(o.timestamp).getTime() < 7*24*60*60*1000);
+  let filtered = orders.filter(o => now - new Date(o.timestamp).getTime() < 14*24*60*60*1000);
   let csv = 'Name;E-Mail;Datum;Produkt;Geschmack;Menge;Preis/Einheit\n';
   filtered.forEach(o => {
     o.items.forEach(item => {
@@ -591,6 +598,8 @@ function exportOrdersCSV() {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
+// --- Admin Passwortschutz ---
+const ADMIN_PW = "ehcbadmin";
 // Admin-Export-Button oben rechts unter der Sprachwahl einfügen:
 const adminBtn = document.createElement('button');
 adminBtn.textContent = 'Admin-Export';
@@ -599,14 +608,21 @@ adminBtn.style.fontSize = '0.95rem';
 adminBtn.style.padding = '0.38rem 1.1rem';
 adminBtn.style.borderRadius = '7px';
 adminBtn.style.margin = '0.25rem 0.7rem 0 0';
-adminBtn.onclick = renderAdminOrders;
+adminBtn.onclick = function() {
+  const entered = prompt("Admin-Passwort:");
+  if (entered === ADMIN_PW) {
+    renderAdminOrders();
+  } else if (entered !== null) {
+    alert("Falsches Passwort!");
+  }
+};
 document.getElementById('adminExportWrap').appendChild(adminBtn);
 
 // --- PDF-Export für Admin-Export ---
 function exportOrdersPDF() {
   let orders = JSON.parse(localStorage.getItem('ehcb_sponser_orders_v7')) || [];
   const now = Date.now();
-  let filtered = orders.filter(o => now - new Date(o.timestamp).getTime() < 7*24*60*60*1000);
+  let filtered = orders.filter(o => now - new Date(o.timestamp).getTime() < 14*24*60*60*1000);
 
   // Dynamisch PDF.js laden, falls noch nicht eingebunden
   if (typeof window.jspdf === "undefined") {
@@ -637,7 +653,7 @@ function exportOrdersPDF() {
       });
     });
     doc.setFontSize(12);
-    doc.text('Bestellungen EHCB Sponser (letzte 7 Tage)', 12, 12);
+    doc.text('Bestellungen EHCB Sponser (letzte 14 Tage)', 12, 12);
 
     // Einfache Tabellen-Logik
     let startY = 18;
