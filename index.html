@@ -193,7 +193,7 @@ input, select, textarea {
         title: "Sponser Bestellformular",
         name: "Name*",
         email: "E-Mail*",
-        submit: "Bestellung absenden",
+        submit: "Bestellübersicht",
         review: "Bestellübersicht",
         back: "Zurück",
         confirm: "Bestellung absenden",
@@ -215,7 +215,7 @@ input, select, textarea {
         title: "Formulaire de commande Sponser",
         name: "Nom*",
         email: "E-mail*",
-        submit: "Envoyer la commande",
+        submit: "Aperçu de la commande",
         review: "Aperçu de la commande",
         back: "Retour",
         confirm: "Envoyer la commande",
@@ -237,7 +237,7 @@ input, select, textarea {
         title: "Sponser Order Form",
         name: "Name*",
         email: "E-mail*",
-        submit: "Submit order",
+        submit: "Order Overview",
         review: "Order overview",
         back: "Back",
         confirm: "Submit order",
@@ -255,6 +255,51 @@ input, select, textarea {
         error_email: "Please enter a valid email address!",
         error_produkt: "Please select at least one product!"
       }
+    };
+
+    // Produktbeschreibungen in mehreren Sprachen
+    const beschreibungen = {
+      "Proteinbar 50": {
+        de: "Eiweissriegel mit 50% Proteinanteil, wenig Zucker, sehr gute Konsistenz. Ideal für nach dem Training oder als Snack.",
+        fr: "Barre protéinée avec 50% de protéines, peu de sucre, très bonne consistance. Idéal après l'entraînement ou comme snack.",
+        en: "Protein bar with 50% protein, low sugar, very good consistency. Ideal after training or as a snack."
+      },
+      "Low Carb Protein Bar": {
+        de: "Kohlenhydrat- und zuckerarmer Eiweissriegel, ideal als Snack oder nach dem Training.",
+        fr: "Barre protéinée pauvre en glucides et en sucre, idéale comme snack ou après l'entraînement.",
+        en: "Low carb, low sugar protein bar, ideal as a snack or after training."
+      },
+      "Energy Bar": {
+        de: "Kohlenhydratreicher Riegel für schnelle Energiezufuhr, gut bekömmlich, ideal vor oder während dem Sport.",
+        fr: "Barre riche en glucides pour un apport énergétique rapide, digeste, idéale avant ou pendant le sport.",
+        en: "Carbohydrate-rich bar for quick energy, easily digestible, ideal before or during sports."
+      },
+      "Liquid Energy Plus": {
+        de: "Flüssiges Energiegel mit Koffein, für schnelle Energie während intensiver Belastung.",
+        fr: "Gel énergétique liquide avec caféine, pour un apport rapide d'énergie lors d'efforts intenses.",
+        en: "Liquid energy gel with caffeine, for quick energy during intense activity."
+      },
+      "Competition": {
+        de: "Saurer, leicht hypotones Sportgetränk ohne künstliche Zusätze. Für hohe Belastungen geeignet.",
+        fr: "Boisson sportive acide, légèrement hypotonique, sans additifs artificiels. Convient pour des efforts intenses.",
+        en: "Sour, slightly hypotonic sports drink without artificial additives. Suitable for intense efforts."
+      },
+      "Recovery Drink": {
+        de: "Kohlenhydrat-Protein-Getränk zur Förderung der Regeneration nach dem Sport.",
+        fr: "Boisson glucidoprotéique pour favoriser la récupération après le sport.",
+        en: "Carbohydrate-protein drink to support recovery after exercise."
+      },
+      "Isotonic": {
+        de: "Isotonisches Sportgetränk mit Mineralstoffen für optimale Flüssigkeitszufuhr.",
+        fr: "Boisson isotonique avec minéraux pour une hydratation optimale.",
+        en: "Isotonic sports drink with minerals for optimal hydration."
+      },
+      "Power Gums": {
+        de: "Kohlenhydratreiche Kaubonbons für schnelle Energie unterwegs.",
+        fr: "Bonbons à mâcher riches en glucides pour un apport énergétique rapide.",
+        en: "Carbohydrate-rich chewy candies for quick energy on the go."
+      },
+      // Weitere Produkte wie besprochen ergänzen...
     };
  
 const SHEET_ID = "1ghgUqfMVAYuJoucv5Aj6NRxV4woKbGxvnHEeLerNHk0";
@@ -289,7 +334,7 @@ function fetchProducts(callback) {
         name: arr[1],
         varianten: arr[2] ? arr[2].split(',').map(s=>s.trim()).filter(Boolean) : [],
         preis: parseFloat(arr[3]) || 0,
-        beschreibung: arr[4] || ""
+        beschreibung: (beschreibungen[arr[1]] && beschreibungen[arr[1]][lang]) || ""
       })).filter(p => p.name && p.preis);
 
       callback();
