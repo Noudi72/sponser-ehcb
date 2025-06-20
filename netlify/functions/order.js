@@ -22,21 +22,24 @@ exports.handler = async function(event, context) {
   const SPREADSHEET_ID = '1ghgUqfMVAYuJoucv5Aj6NRxV4woKbGxvnHEeLerNHk0';
   const RANGE = 'Sponser Bestellformular!A2'; // Passe an, falls nötig
 
-  // Beispiel: Schreibe Name, Email, Bestellung als JSON
+  // Schreibe jede Artikelzeile einzeln ins Sheet
+  const now = new Date().toLocaleString("de-CH", { timeZone: "Europe/Zurich" });
+
+  const values = body.items.map(item => [
+    now,
+    body.name,
+    body.email,
+    item.produkt,
+    item.geschmack,
+    item.menge,
+    item.preis ? ("CHF " + Number(item.preis).toFixed(2)) : ""
+  ]);
+
   await sheets.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
     range: RANGE,
     valueInputOption: "USER_ENTERED",
-    requestBody: {
-      values: [
-        [
-          new Date().toLocaleString("de-CH", { timeZone: "Europe/Zurich" }),
-          body.name,
-          body.email,
-          JSON.stringify(body.items),
-        ]
-      ]
-    }
+    requestBody: { values }
   });
 
   return {
