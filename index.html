@@ -518,7 +518,7 @@ function finalizeOrder(bestellung, name, email) {
   localStorage.setItem('ehcb_sponser_orders_v7', JSON.stringify(orders));
 
   // Google Sheets-Anbindung:
-  fetch("https://script.google.com/macros/s/AKfycbx7KNZCzZFNgtQ8MldGQKU8_DVLEbm7ZGG0yiwmzAw6IV-C9Nr9T15GiCRWq-LumyqB9w/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbxT1IrcgdAqTv0WabOkr6gjMQZRCAo1N95VZjjgS2ns8GnIbdq-VBTsydZqDwpcyNO91g/exec", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"
