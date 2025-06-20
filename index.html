@@ -334,7 +334,7 @@ function fetchProducts(callback) {
         name: arr[1],
         varianten: arr[2] ? arr[2].split(',').map(s=>s.trim()).filter(Boolean) : [],
         preis: parseFloat(arr[3]) || 0,
-        beschreibung: (beschreibungen[arr[1]] && beschreibungen[arr[1]][lang]) || ""
+        beschreibung: arr[4] || ""
       })).filter(p => p.name && p.preis);
 
       callback();
