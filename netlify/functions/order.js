@@ -1,56 +1,46 @@
+// netlify/functions/order.js
 const { google } = require('googleapis');
 
-exports.handler = async function(event) {
+exports.handler = async function(event, context) {
   if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      body: "Method Not Allowed"
-    };
+    return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  // Die Environment-Variablen
-  const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-  const sheetId = process.env.GOOGLE_SHEET_ID;
-
-  // Daten aus dem Body
+  // Environment Variable mit Service Account JSON
+  const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
   const body = JSON.parse(event.body);
-  const { name, email, items } = body;
-  const date = new Date().toLocaleString('de-CH', { timeZone: 'Europe/Zurich' });
 
-  // Google Auth
-  const auth = new google.auth.GoogleAuth({
-    credentials: serviceAccount,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets']
+  const auth = new google.auth.JWT(
+    serviceAccount.client_email,
+    null,
+    serviceAccount.private_key,
+    ['https://www.googleapis.com/auth/spreadsheets']
+  );
+
+  const sheets = google.sheets({ version: "v4", auth });
+
+  const SPREADSHEET_ID = '1ghgUqfMVAYuJoucv5Aj6NRxV4woKbGxvnHEeLerNHk0';
+  const RANGE = 'Sponser Bestellformular!A2'; // Passe an, falls nötig
+
+  // Beispiel: Schreibe Name, Email, Bestellung als JSON
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: SPREADSHEET_ID,
+    range: RANGE,
+    valueInputOption: "USER_ENTERED",
+    requestBody: {
+      values: [
+        [
+          new Date().toLocaleString("de-CH", { timeZone: "Europe/Zurich" }),
+          body.name,
+          body.email,
+          JSON.stringify(body.items),
+        ]
+      ]
+    }
   });
-  const sheets = google.sheets({ version: 'v4', auth });
 
-  // Jede Bestellung als eigene Zeile eintragen
-  const rows = items.map(item => [
-    date,
-    name,
-    email,
-    item.produkt || '',
-    item.geschmack || '',
-    item.menge || '',
-    item.preis ? ("CHF " + Number(item.preis).toFixed(2)) : ""
-  ]);
-
-  try {
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: sheetId,
-      range: "A1", // Sheet beginnt bei A1, jede Bestellung wird angehängt
-      valueInputOption: "USER_ENTERED",
-      insertDataOption: "INSERT_ROWS",
-      requestBody: { values: rows }
-    });
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ success: true })
-    };
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ success: false, error: err.message })
-    };
-  }
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ message: "OK" }),
+  };
 };
