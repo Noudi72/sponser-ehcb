@@ -518,7 +518,7 @@ function finalizeOrder(bestellung, name, email) {
   localStorage.setItem('ehcb_sponser_orders_v7', JSON.stringify(orders));
 
   // Bestellung an Netlify Function senden:
-  fetch("/.netlify/functions/order", {
+  fetch("https://ehcbsponser.netlify.app/.netlify/functions/order", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, email, items: bestellung })
