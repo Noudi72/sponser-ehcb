@@ -6,6 +6,8 @@ process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
 });
 
+console.log("Netlify-Funktion order.js gestartet");
+
 // netlify/functions/order.js
 const { google } = require('googleapis');
 
@@ -70,6 +72,8 @@ exports.handler = async function(event, context) {
       requestBody: { values }
     });
 
+    console.log("Google Sheets Append erfolgreich:", values.length, "Zeilen");
+
     return {
       statusCode: 200,
       headers: {
@@ -78,6 +82,10 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ message: "OK" })
     };
   } catch (err) {
+    // Fehler-Logging direkt an die Netlify-Konsole!
+    console.error("FEHLER Google Service Account:", process.env.GOOGLE_SERVICE_ACCOUNT ? "vorhanden" : "FEHLT");
+    console.error("FEHLER Event-Body:", event.body);
+    console.error("FEHLER:", err);
     return {
       statusCode: 500,
       headers: {
@@ -85,7 +93,10 @@ exports.handler = async function(event, context) {
       },
       body: JSON.stringify({
         error: err.message,
-        stack: err.stack
+        stack: err.stack,
+        details: err,
+        env: process.env.GOOGLE_SERVICE_ACCOUNT ? "Service Account geladen" : "Service Account FEHLT",
+        eventBody: event.body
       })
     };
   }
