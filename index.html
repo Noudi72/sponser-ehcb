@@ -517,8 +517,8 @@ function finalizeOrder(bestellung, name, email) {
   orders.push({ name, email, items: bestellung, timestamp: new Date().toISOString() });
   localStorage.setItem('ehcb_sponser_orders_v7', JSON.stringify(orders));
 
-  // Bestellung an Netlify Function senden:
-  fetch("https://ehcbsponser.netlify.app/.netlify/functions/order", {
+  // Bestellung an Google Apps Script senden:
+  fetch("https://script.google.com/macros/s/AKfycby0dWzqqlqbMYVQKRZE28ofBt_tJ9an4cfohu4zyjaqoohwa0EZxbY3JZWH8bhBRTGfiw/exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, email, items: bestellung })
